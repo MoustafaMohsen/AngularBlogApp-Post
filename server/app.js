@@ -51,18 +51,18 @@ app.post('/api/user/create', (req, res) => {
 	});
 })
 
-app.post('/api/post/create', (req, res) => {
-	mongoose.connect(url, function(err){
+app.post('/api/post/createPost', (req, res) => {
+	mongoose.connect(url, { useMongoClient: true }, function(err){
 		if(err) throw err;
 		const post = new Post({
 			title: req.body.title,
 			description: req.body.description
 		})
-		post.save((err, res) => {
+		post.save((err, doc) => {
 			if(err) throw err;
 			return res.status(200).json({
 				status: 'success',
-				data: res
+				data: doc
 			})
 		})
 	});
@@ -88,7 +88,7 @@ app.post('/api/post/getPost', (req, res) => {
 app.post('/api/post/getAllPost', (req, res) => {
 	mongoose.connect(url, { useMongoClient: true } , function(err){
 		if(err) throw err;
-		Post.find((err, doc) => {
+		Post.find({},[],{ sort: { _id: -1 } },(err, doc) => {
 			if(err) throw err;
 			return res.status(200).json({
 				status: 'success',
